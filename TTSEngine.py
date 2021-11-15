@@ -14,6 +14,8 @@ class TTSEngine:
         self.say(f'Hello{", " + name if name else ""}!')
 
     def end(self):
-        if self.engine.isBusy():
+        try:
             self.engine.endLoop()
+        except RuntimeError:
+            pass
         self.say('Goodbye')

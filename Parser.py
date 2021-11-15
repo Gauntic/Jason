@@ -28,7 +28,7 @@ class Parser:
     def parse(self, command):
         command = command.lower()
         if self.va_name.lower() not in command:
-                return True
+            return True
         command = command.replace(self.va_name.lower(), '').strip()
         if command.startswith('please'):
             command = command.replace('please', '').strip()
@@ -68,6 +68,8 @@ class Parser:
             self.search(command[7:])
         elif command.startswith('wiki '):
             self.search(command[5:])
+        elif command.startswith('wikipedia '):
+            self.search(command[10:])
         elif command.startswith('calculate '):
             self.calc(command.replace('calculate', '').strip())
         elif command.startswith('define '):
@@ -247,6 +249,7 @@ class Parser:
                 app_icon=new_file,
                 app_name=self.va_name + ' Voice Assistant',
             )
+            os.remove(new_file)
 
         threading.Thread(target=notify).start()
 
@@ -297,7 +300,7 @@ class Parser:
         url = 'https://api.wolframalpha.com/v2/query?input=' + param + '&appid=' + os.environ.get('WOLFRAM_APP_ID') + \
               '&format=plaintext&output=json'
         res = requests.get(url).json()
-        if not res['queryresult']['pods']:
+        if 'queryresults' not in res.keys() or 'pods' not in res['queryresults'].keys():
             self.engine.say('Not found.')
             return
         title = res['queryresult']['pods'][0]['subpods'][0]['plaintext']
