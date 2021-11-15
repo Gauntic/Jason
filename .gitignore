@@ -1,6 +1,8 @@
 .idea
 venv
 __pycache__
+build
+dist
 
 config.yaml
 .env

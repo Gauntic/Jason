@@ -12,7 +12,6 @@ def listen():
         audio = rec.listen(source, phrase_time_limit=10)
     try:
         res = rec.recognize_google(audio, language='en-us')
-        print(res)
         return res
     except sr.UnknownValueError as err:
         return None

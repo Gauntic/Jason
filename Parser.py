@@ -30,7 +30,6 @@ class Parser:
         if self.va_name.lower() not in command:
                 return True
         command = command.replace(self.va_name.lower(), '').strip()
-        print(command)
         if command.startswith('please'):
             command = command.replace('please', '').strip()
 
@@ -130,7 +129,6 @@ class Parser:
                 e.delete(0, len(sv.get()))
                 deleted_vars[i] = True
                 if diff[0].startswith('-'):
-                    print([d[-1] for d in diff])
                     e.insert(1000, ''.join([d[-1] for d in diff]))
 
         path.trace('w', lambda n, index, mode, sv=path: delHint(entry, path, deleted, 0,
