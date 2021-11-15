@@ -15,6 +15,9 @@ if __name__ == '__main__':
     run = True
 
     try:
+        if not Config.get_config('name'):
+            engine.say('Hello, I\'m Jason.')
+            Config.set_config('name', Listener.wait_for('What is your name?', engine))
         engine.greet(Config.get_config('name'))
         while run:
             run = parser.parse(Listener.listen() or '')
