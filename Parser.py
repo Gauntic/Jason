@@ -2,6 +2,7 @@ import difflib
 import os
 import re
 import subprocess
+import sys
 import threading
 import time
 import webbrowser
@@ -90,6 +91,8 @@ class Parser:
     # Makes a prompt to add either an app or site alias (tkinter, difflib)
     def prompt_alias(self, t):
         root = Tk()
+        if sys.platform.startswith('win'):
+            use_theme(root, 'clam')
         frame = ttk.Frame(root, padding=10)
         root.iconphoto(False, PhotoImage(file='logo.png'))
         root.title(t.title() + ' alias')
@@ -155,6 +158,8 @@ class Parser:
     # Creates a GUI prompt to schedule an OS notification (tkinter)
     def notification_gui(self):
         root = Tk()
+        if sys.platform.startswith('win'):
+            use_theme(root, 'clam')
         frame = ttk.Frame(root, padding=10)
         root.iconphoto(False, PhotoImage(file='logo.png'))
         root.title('New Notification')
@@ -383,3 +388,8 @@ class Parser:
         except Exception:
             print('Bad request.')
             self.engine.say('Sorry, try again later.')
+
+
+def use_theme(root: Tk, theme):
+    ttk.Style(root).theme_use(theme)
+
