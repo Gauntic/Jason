@@ -5,13 +5,21 @@ import subprocess
 import sys
 import threading
 import time
+import wave
 import webbrowser
 from datetime import timedelta
+from io import BytesIO
 from tkinter import ttk, PhotoImage, Tk, filedialog, StringVar
 
+import cv2.cv2
+import ffmpeg
 import geocoder
+import numpy
+import pyaudio
 import requests
+import win32clipboard
 from PIL import Image
+from cv2 import cv2
 from plyer import notification
 from pyautogui import press
 from wikipedia import wikipedia
@@ -31,6 +39,7 @@ class Parser:
         if self.va_name.lower() not in command:
             return True
         command = command.replace(self.va_name.lower(), '').strip()
+        print(command)
         if command.startswith('please'):
             command = command.replace('please', '').strip()
 
@@ -57,6 +66,8 @@ class Parser:
             self.vol_up()
         elif command == 'volume down':
             self.vol_down()
+        elif command == 'take photo':
+            self.take_photo()
         elif command == 'censor jokes':
             Config.set_config('joke_censor', True)
         elif command == 'remove joke censor':
@@ -389,7 +400,113 @@ class Parser:
             print('Bad request.')
             self.engine.say('Sorry, try again later.')
 
+    # Takes a photo using the default camera (opencv-python)
+    def take_photo(self):
+        taken = False
+        vid = cv2.VideoCapture(0)
+        cv2.namedWindow('frame')
+        while cv2.getWindowProperty('frame', cv2.WND_PROP_VISIBLE) >= 1:
+            ret, frame = vid.read()
+            try:
+                cv2.imshow('frame', frame)
+            except cv2.error:
+                vid.release()
+                cv2.destroyAllWindows()
+                self.engine.say('You don\'t have a connected camera.')
+                return
+
+            if cv2.waitKey(1) & 0xFF == ord(' '):
+                img = frame
+                cv2.imwrite('temp.png', img)
+                i = Image.open('temp.png')
+                output = BytesIO()
+                i.convert("RGB").save(output, "BMP")
+                data = output.getvalue()[14:]
+                output.close()
+                win32clipboard.OpenClipboard()
+                win32clipboard.EmptyClipboard()
+                win32clipboard.SetClipboardData(win32clipboard.CF_DIB, data)
+                win32clipboard.CloseClipboard()
+                os.remove('temp.png')
+                taken = True
+                break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        vid.release()
+        cv2.destroyAllWindows()
+        if taken:
+            self.engine.say('Photo copied to your clipboard.')
+        else:
+            self.engine.say('Image discarded.')
+
+    # Takes a video using the default camera (opencv-python, pyaudio, ffmpeg-python)
+    # Requirements: ffmpeg
+    def take_video(self):
+        vid = cv2.VideoCapture(0)
+        print('name: ' + vid.getBackendName())
+        if not vid.isOpened():
+            self.engine.say('You don\'t have a connected camera.')
+            return
+        _, test_pic = vid.read()
+        if not isinstance(test_pic, numpy.ndarray):
+            self.engine.say('Your camera seems to be in use elsewhere.')
+            return
+        vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        print('res: ' + vid.get(cv2.CAP_PROP_FRAME_WIDTH), vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        save = False
+        p = pyaudio.PyAudio()
+
+        stream = p.open(format=pyaudio.paInt16,
+                        channels=2,
+                        rate=44100,
+                        frames_per_buffer=int(44100 / 30),
+                        input=True)
+        frames = []
+
+        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        vid_out = cv2.VideoWriter('./output/temp.mp4', fourcc, 30, (test_pic.shape[1], test_pic.shape[0]))
+        print('Recording')
+        cv2.namedWindow('frame')
+        while cv2.getWindowProperty('frame', cv2.WND_PROP_VISIBLE) >= 1:
+            ret, frame = vid.read()
+            if ret:
+                vid_out.write(frame)
+                data = stream.read(int(44100 / 30))
+                frames.append(data)
+                cv2.imshow('frame', frame)
+                if cv2.waitKey(1) & 0xFF == ord(' ') or cv2.waitKey(1) & 0xFF == ord('q'):
+                    save = True
+                    break
+            else:
+                break
+
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+        vid.release()
+        vid_out.release()
+        cv2.destroyAllWindows()
+
+        if save:
+            wf = wave.open('./output/temp.wav', 'wb')
+            wf.setnchannels(2)
+            wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
+            wf.setframerate(44100)
+            wf.writeframes(b''.join(frames))
+            wf.close()
+
+            video = ffmpeg.input('./output/temp.mp4')
+            audio = ffmpeg.input('./output/temp.wav')
+            ffmpeg.concat(video, audio, v=1, a=1).output('./output/output.mp4').run(overwrite_output=True)
+            os.remove('./output/temp.wav')
+            os.remove('./output/temp.mp4')
+            self.engine.say('Video saved to output/output.mp4.')
+        else:
+            os.remove('./output/temp.mp4')
+            self.engine.say('Video discarded.')
+
 
 def use_theme(root: Tk, theme):
     ttk.Style(root).theme_use(theme)
-

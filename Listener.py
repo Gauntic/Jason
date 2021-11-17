@@ -9,7 +9,7 @@ def listen():
     rec.pause_threshold = 2
     with mic as source:
         print('Listening...')
-        audio = rec.listen(source, phrase_time_limit=10)
+        audio = rec.listen(source)
     try:
         res = rec.recognize_google(audio, language='en-us')
         return res

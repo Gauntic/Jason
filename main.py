@@ -19,6 +19,7 @@ if __name__ == '__main__':
             engine.say('Hello, I\'m Jason.')
             Config.set_config('name', Listener.wait_for('What is your name?', engine))
         engine.greet(Config.get_config('name'))
+        parser.take_video()
         while run:
             run = parser.parse(Listener.listen() or '')
     except KeyboardInterrupt:
