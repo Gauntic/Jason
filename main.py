@@ -13,6 +13,8 @@ engine = TTSEngine(pyttsx3.init())
 if __name__ == '__main__':
     parser = Parser(engine, va_name)
     run = True
+    if Config.get_config('joke_censor') is None:
+        Config.set_config('joke_censor', True)
 
     try:
         if not Config.get_config('name'):
