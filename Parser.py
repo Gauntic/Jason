@@ -453,7 +453,7 @@ class Parser:
             return
         vid.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
         vid.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-        print('res: ' + vid.get(cv2.CAP_PROP_FRAME_WIDTH), vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print('res: %d x %d' % (vid.get(cv2.CAP_PROP_FRAME_WIDTH), vid.get(cv2.CAP_PROP_FRAME_HEIGHT)))
         save = False
         p = pyaudio.PyAudio()
 
