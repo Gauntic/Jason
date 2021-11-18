@@ -93,8 +93,18 @@ class Parser:
             self.define(command.replace('define', '').strip())
         elif 'notify' in command or 'notification' in command:
             self.notification_gui()
+        elif command.startswith('timer '):
+            self.set_timer(command[6:])
         elif command == 'what\'s your name' or command == 'who are you':
-            self.engine.say('I\'m ' + self.va_name + ', a voice assistant created by Gauntic.')
+            self.engine.say('I\'m ' + self.va_name + ', a voice assistant created by the Gauntic Team.')
+        elif command == 'what\'s your favorite food' or command == 'what do you eat':
+            self.engine.say('Corn.')
+        elif command == 'what\'s your favorite color':
+            self.engine.say('I can\'t see color.')
+        elif command == 'what is the meaning of the universe':
+            self.engine.say('Gaming.')
+        elif command == 'who made you' or command == 'who created you':
+            self.engine.say('I was created by Elliot Topper, part of the Gauntic Team.')
         elif command.startswith('thank you') or command.startswith('thanks'):
             self.engine.say('You\'re welcome.')
         elif command == 'exit' or command == 'close' or command == 'bye' or command == 'goodbye':
@@ -533,6 +543,18 @@ class Parser:
             print(f"avg {((_max + 1) / 2) * num}")
         else:
             self.engine.say('Bad call to roll.')
+
+    def set_timer(self, param):
+        def timer(t):
+            time.sleep(t)
+            self.engine.say('Your timer\'s up!')
+
+        if re.match('^\\d+$', param) is not None:
+            thr = threading.Thread(target=lambda: timer(int(param)))
+            thr.setDaemon(True)
+            thr.start()
+        else:
+            self.engine.say('Please say just a number in seconds for the timer delay.')
 
 
 def use_theme(root: Tk, theme):
