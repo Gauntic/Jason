@@ -24,7 +24,7 @@ Jason responds every time his name is said. The rest of a command is then parsed
 |8Ball|"8 ball [query]"|Jason replies with a random standard Magic 8 Ball response.|
 |Roll Dice|"roll [query]", where [query] is in the format of either a number or "[value] times [number]"|Simulates rolling a [value]-sided die [number] (defaults to 1) times; Jason replies with the sum of all results.|
 |Timer|"timer [time in seconds]"|After [time in seconds] seconds, as long as Jason is still running, he will notify the user that a timer has finished.|
-|Questions|any of a set number of questions|Jason responds to the question if he has an answer.|
+|Questions|any of a set number of questions about Jason|Jason responds to the question if he has an answer.|
 |Thank|"thanks", "thank you"|Jason replies, "You're welcome."|
 |Set Joke Censor|"censor jokes"|Sets the `joke_censor` value in the config file to true, turning on safe mode in calls to JokeAPI.|
 |Remove Joke Censor|"remove joke censor"|Sets the `joke_censor` value in the config file to false, turning off safe mode in calls to JokeAPI.|
@@ -54,6 +54,7 @@ Jason responds every time his name is said. The rest of a command is then parsed
 #### API Calls
 |Name|Input|Output|
 |:---|:---|:---|
+|Link Shortener|"shorten url"|Displays a GUI, which calls the [Bitly API](https://dev.bitly.com/) with an inputted value and returns a shortened bit.ly link.
 |Joke|any phrase containing "joke"|Calls the [JokeAPI](https://v2.jokeapi.dev/) using the config value of `joke_censor` (default true) and Jason replies with the joke.|
 |Calculate|"calculate [expression]"|Calls the [Wolfram&#124;Alpha API](https://products.wolframalpha.com/api/) with [expression] and Jason says the result.|
 |Define|"define [word/phrase]"|Calls the [Wolfram&#124;Alpha API](https://products.wolframalpha.com/api/) with [word/phrase] and Jason says the result.|
@@ -64,6 +65,7 @@ Jason responds every time his name is said. The rest of a command is then parsed
 
 ##### Here is an alphabetized list of all modules and APIs used to build Jason.
 
+- [Bitly API](https://dev.bitly.com/)
 - [FFmpeg](https://www.ffmpeg.org/)
 - [ffmpeg-python](https://pypi.org/project/ffmpeg-python/)
 - [geocoder](https://pypi.org/project/geocoder/)
@@ -85,4 +87,4 @@ Jason responds every time his name is said. The rest of a command is then parsed
 - [wikipedia module](https://pypi.org/project/wikipedia/)
 - [Wolfram|Alpha API](https://products.wolframalpha.com/api/)
 
-Jason was created by Gauntic Team under the [MIT License](./LICENSE.md)
+Jason was created by Gauntic Team under the [MIT License](LICENSE)

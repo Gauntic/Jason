@@ -1,4 +1,5 @@
 import difflib
+import json
 import os
 import random
 import re
@@ -6,6 +7,7 @@ import subprocess
 import sys
 import threading
 import time
+import tkinter
 import wave
 import webbrowser
 from datetime import timedelta
@@ -73,6 +75,8 @@ class Parser:
             self.vol_down()
         elif command == 'take photo':
             self.take_photo()
+        elif command == 'shorten url':
+            self.shorten_url()
         elif command == 'censor jokes':
             Config.set_config('joke_censor', True)
         elif command == 'remove joke censor':
@@ -264,6 +268,59 @@ class Parser:
         button2.grid(row=0, column=4, rowspan=6, sticky='NESW')
         root.protocol('WM_DELETE_WINDOW', cancel_notif)
 
+        root.mainloop()
+
+    def shorten_url(self):
+        root = Tk()
+        if sys.platform.startswith('win'):
+            use_theme(root, 'clam')
+        frame = ttk.Frame(root, padding=10)
+        root.iconphoto(False, PhotoImage(file='logo.png'))
+        root.title('URL shortening')
+        frame.grid()
+        url = StringVar()
+
+        def create_shortened(in_var, out_var):
+            u = 'https://api-ssl.bitly.com/v4/shorten'
+            data = {
+                "long_url": in_var.get(),
+                "domain": "bit.ly",
+            }
+            headers = {
+                'Authorization': f"Bearer {os.environ.get('BITLY_API_TOKEN')}",
+            }
+            res = requests.post(u, json=data, headers=headers).json()
+            if 'link' not in res:
+                self.engine.say('Please provide a valid URL.')
+                return
+            out_var.set(res['link'])
+
+        def cancel():
+            root.destroy()
+
+        def copy_shortcut():
+            if output.get() == '':
+                return
+            win32clipboard.OpenClipboard()
+            win32clipboard.EmptyClipboard()
+            win32clipboard.SetClipboardData(win32clipboard.CF_TEXT, output.get())
+            win32clipboard.CloseClipboard()
+            self.engine.say('Link copied!')
+
+        url_label = ttk.Label(frame, text='URL')
+        url_label.grid(row=0, column=0, columnspan=2)
+        url_input = ttk.Entry(frame, textvariable=url, width=45)
+        url_input.grid(row=1, column=0, pady=10, columnspan=2)
+
+        output = StringVar()
+        shortened_output = ttk.Entry(frame, textvariable=output, state='readonly', width=30)
+        shortened_output.grid(row=2, column=0, pady=10)
+
+        ttk.Button(frame, command=copy_shortcut, text='Copy', width=10).grid(row=2, column=1)
+
+        button = ttk.Button(frame, text='Create Shortened URL', command=lambda: create_shortened(url, output))
+        button.grid(row=1, column=2, rowspan=2, sticky='NESW', pady=10, padx=5)
+        root.protocol('WM_DELETE_WINDOW', cancel)
         root.mainloop()
 
     # Schedules then deploys an OS notification. (threading, plyer)
@@ -523,7 +580,11 @@ class Parser:
             self.engine.say('Video discarded.')
 
     def eight_ball(self):
-        responses = ["It is certain.", "It is decidedly so.", "Without a doubt.", "Yes definitely.", "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.", "Signs point to yes.", "Reply hazy, try again.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Very doubtful."]
+        responses = ["It is certain.", "It is decidedly so.", "Without a doubt.", "Yes definitely.",
+                     "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.",
+                     "Signs point to yes.", "Reply hazy, try again.", "Ask again later.", "Better not tell you now.",
+                     "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "My reply is no.",
+                     "My sources say no.", "Outlook not so good.", "Very doubtful."]
         self.engine.say(random.choice(responses))
         pass
 
