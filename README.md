@@ -19,13 +19,15 @@ Jason responds every time his name is said. The rest of a command is then parsed
 
 |Name|Input|Output|
 |:---|:---|:---|
-|Greet|Called on start; "hi", "hello", "greetings", "hey"|Jason replies, "Hello!"; On startup, Jason additionally repeats the name configured in `Set Name`
-|Set Name|"call me [name]", "my name is [name]", "my name's [name]"|Sets the `name` config property to [name], and then `Greet`s the user.
-|Introduce|"what's your name?", "who are you?"|Jason replies with his name and some information about himself.
-|Thank|"thanks", "thank you"|Jason replies, "You're welcome."
-|Set Joke Censor|"censor jokes"|Sets the `joke_censor` value in the config file to true, turning on safe mode in calls to JokeAPI.
+|Greet|Called on start; "hi", "hello", "greetings", "hey"|Jason replies, "Hello!"; On startup, Jason additionally repeats the name configured in `Set Name`|
+|Set Name|"call me [name]", "my name is [name]", "my name's [name]"|Sets the `name` config property to [name], and then `Greet`s the user.|
+|8Ball|"8 ball [query]"|Jason replies with a random standard Magic 8 Ball response.|
+|Roll Dice|"roll [query]", where [query] is in the format of either a number or "[value] times [number]"|Simulates rolling a [value]-sided die [number] (defaults to 1) times; Jason replies with the sum of all results.|
+|Introduce|"what's your name?", "who are you?"|Jason replies with his name and some information about himself.|
+|Thank|"thanks", "thank you"|Jason replies, "You're welcome."|
+|Set Joke Censor|"censor jokes"|Sets the `joke_censor` value in the config file to true, turning on safe mode in calls to JokeAPI.|
 |Remove Joke Censor|"remove joke censor"|Sets the `joke_censor` value in the config file to false, turning off safe mode in calls to JokeAPI.|
-|Quit|"exit", "close", "bye", "goodbye"|Jason replies, "Goodbye" and shuts down.
+|Quit|"exit", "close", "bye", "goodbye"|Jason replies, "Goodbye" and shuts down.|
 
 #### Applications and Website Commands
 |Name|Input|Output|

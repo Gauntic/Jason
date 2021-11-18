@@ -1,5 +1,6 @@
 import difflib
 import os
+import random
 import re
 import subprocess
 import sys
@@ -58,6 +59,10 @@ class Parser:
             self.open_app(command[5:])
         elif command == 'add app':
             self.prompt_alias('app')
+        elif command.startswith('8 ball') or command.startswith('8ball') or command.startswith('eight ball'):
+            self.eight_ball()
+        elif command.startswith('roll '):
+            self.roll(command[5:])
         elif command.startswith('news'):
             self.get_news(command.replace('news', '').strip())
         elif command == 'pause' or command == 'paz':
@@ -506,6 +511,28 @@ class Parser:
         else:
             os.remove('./output/temp.mp4')
             self.engine.say('Video discarded.')
+
+    def eight_ball(self):
+        responses = ["It is certain.", "It is decidedly so.", "Without a doubt.", "Yes definitely.", "You may rely on it.", "As I see it, yes.", "Most likely.", "Outlook good.", "Yes.", "Signs point to yes.", "Reply hazy, try again.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Very doubtful."]
+        self.engine.say(random.choice(responses))
+        pass
+
+    def roll(self, query):
+        regex = re.compile('^\\d+(\\*\\d+)?$')
+        if regex.match(query) is not None:
+            _max = int(re.findall('^\\d+', query)[0])
+            num = 1
+            if '*' in query:
+                num = int(re.findall('\\d+$', query)[0])
+            rand = 0
+            for _ in range(num):
+                i = random.randint(1, _max)
+                print(i)
+                rand += i
+            self.engine.say('You rolled ' + str(rand) + '.')
+            print(f"avg {((_max + 1) / 2) * num}")
+        else:
+            self.engine.say('Bad call to roll.')
 
 
 def use_theme(root: Tk, theme):
