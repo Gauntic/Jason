@@ -1,5 +1,5 @@
 ## Jason Voice Assistant
-___
+
 Jason is a simple voice assistant made in Python that provides both unique and useful functions to make everyday computer easier. 
 
 Jason utilizes various libraries and APIs in order to function. Associated dependencies are listed next to functions, or a complete list can be found [here](#dependencies).
