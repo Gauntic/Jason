@@ -13,7 +13,7 @@ Upon running, Jason will inquire a user's name; this and all other necessary con
 
 ### Commands
 
-Jason responds every time his name is said. The rest of a command is then parsed, and sent to complete one of a growing number of functions.
+Jason responds every time his name is said. The rest of a command is then parsed, and sent to complete one of a large number of functions.
 
 #### Basic Commands
 
