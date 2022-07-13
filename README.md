@@ -37,7 +37,7 @@ Jason responds every time his name is said. The rest of a command is then parsed
 |Add Site|"add site"|Displays a GUI allowing a website link to be added to the config file for opening through Jason.|
 |Open|"open [app/site name]"|Searches the configuration file for an app then a website with the requested name, and opens it if found.|
 
-#### Hardware functions
+#### OS functions
 |Name|Input|Output|
 |:---|:---|:---|
 |Take Photo|"take photo"|Opens a new window using OpenCV which displays a camera feed. `Space` will take a photo and `q` will quit. Once a photo has been taken, it is copied to the user's clipboard for any use that is desired.|
