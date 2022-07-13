@@ -106,7 +106,7 @@ class Parser:
         elif command == 'what\'s your favorite color':
             self.engine.say('I can\'t see color.')
         elif command == 'what is the meaning of the universe':
-            self.engine.say('Gaming.')
+            self.engine.say('42')
         elif command == 'who made you' or command == 'who created you':
             self.engine.say('I was created by Elliot Topper, part of the Gauntic Team.')
         elif command.startswith('thank you') or command.startswith('thanks'):
